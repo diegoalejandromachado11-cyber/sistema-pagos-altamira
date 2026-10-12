@@ -1,64 +1,4 @@
-<?php
-require "conexion.php";
-verificarSesion();
-
-$mensaje = "";
-$tipo = "success";
-
-// ---------- REGISTRAR PAGO ----------
-if (isset($_POST['guardar'])) {
-    // El vecino solo puede registrar pagos a su nombre; el admin elige el vecino
-    $id_usuario = esAdmin() ? $_POST['id_usuario'] : $_SESSION['id_usuario'];
-    $monto = $_POST['monto'];  // monto en bolívares
-
-    // Buscamos la tasa BCV de la fecha del pago para convertir a dólares
-    $tasa = buscarTasa($conexion, $_POST['fecha_pago']);
-    $id_tasa   = $tasa ? $tasa['id_tasa'] : null;
-    $monto_usd = $tasa ? round($monto / $tasa['tasa_usd'], 2) : null;
-
-    $sql = "INSERT INTO pago (id_usuario, id_rubro, id_tasa, monto, monto_usd, fecha_pago, periodo, metodo_pago, referencia)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
-    $conexion->prepare($sql)->execute([
-        $id_usuario, $_POST['id_rubro'], $id_tasa, $monto, $monto_usd,
-        $_POST['fecha_pago'], $_POST['periodo'], $_POST['metodo_pago'], $_POST['referencia']
-    ]);
-
-    registrarAuditoria($conexion, "CREAR", "pago", $conexion->lastInsertId(), "Pago de $monto Bs");
-    $mensaje = "Pago registrado" . ($tasa ? " ($monto_usd USD)" : ". Atención: no hay tasa BCV registrada, no se calculó el monto en dólares");
-    if (!$tasa) $tipo = "warning";
-}
-
-// ---------- ELIMINAR PAGO (solo admin) ----------
-if (isset($_GET['eliminar']) && esAdmin()) {
-    $conexion->prepare("DELETE FROM pago WHERE id_pago = ?")->execute([$_GET['eliminar']]);
-    registrarAuditoria($conexion, "ELIMINAR", "pago", $_GET['eliminar'], "Pago eliminado");
-    $mensaje = "Pago eliminado";
-}
-
-// ---------- LISTAR ----------
-$sql = "SELECT p.*, u.nombre, u.cedula, r.nombre AS rubro, t.tasa_usd
-        FROM pago p
-        JOIN usuario u ON p.id_usuario = u.id_usuario
-        JOIN rubro r ON p.id_rubro = r.id_rubro
-        LEFT JOIN tasa_bcv t ON p.id_tasa = t.id_tasa";
-if (!esAdmin()) {
-    $sql .= " WHERE p.id_usuario = " . (int) $_SESSION['id_usuario'];
-}
-$sql .= " ORDER BY p.fecha_pago DESC";
-$pagos = $conexion->query($sql)->fetchAll(PDO::FETCH_ASSOC);
-
-$rubros   = $conexion->query("SELECT * FROM rubro ORDER BY nombre")->fetchAll(PDO::FETCH_ASSOC);
-$usuarios = $conexion->query("SELECT * FROM usuario ORDER BY nombre")->fetchAll(PDO::FETCH_ASSOC);
-$tasaHoy  = buscarTasa($conexion, date("Y-m-d"));
-
-include "header.php";
-?>
-
 <h3 class="mb-4">Pagos</h3>
-
-<?php if ($mensaje) { ?>
-    <div class="alert alert-<?= $tipo ?>"><?= $mensaje ?></div>
-<?php } ?>
 
 <div class="card mb-4">
     <div class="card-header">Registrar pago
@@ -67,13 +7,13 @@ include "header.php";
         <?php } ?>
     </div>
     <div class="card-body">
-        <form method="POST" class="row g-3">
+        <form method="POST" action="index.php?c=pagos&a=guardar" class="row g-3">
             <?php if (esAdmin()) { ?>
             <div class="col-md-4">
                 <label class="form-label">Vecino</label>
                 <select name="id_usuario" class="form-select" required>
                     <?php foreach ($usuarios as $u) { ?>
-                        <option value="<?= $u['id_usuario'] ?>"><?= htmlspecialchars($u['nombre']) ?> - <?= $u['cedula'] ?></option>
+                        <option value="<?= $u['id_usuario'] ?>"><?= htmlspecialchars($u['nombre']) ?> - <?= htmlspecialchars($u['cedula']) ?></option>
                     <?php } ?>
                 </select>
             </div>
@@ -114,7 +54,7 @@ include "header.php";
                 <input type="text" name="referencia" class="form-control">
             </div>
             <div class="col-12">
-                <button name="guardar" class="btn btn-primary">Registrar pago</button>
+                <button class="btn btn-primary">Registrar pago</button>
             </div>
         </form>
     </div>
@@ -136,12 +76,12 @@ include "header.php";
                     <td><?= htmlspecialchars($p['rubro']) ?></td>
                     <td><?= $p['periodo'] ?></td>
                     <td><?= htmlspecialchars($p['metodo_pago']) ?></td>
-                    <td><?= htmlspecialchars($p['referencia']) ?></td>
+                    <td><?= htmlspecialchars($p['referencia'] ?? '') ?></td>
                     <td><?= number_format($p['monto'], 2, ',', '.') ?></td>
                     <td><?= $p['tasa_usd'] ? number_format($p['tasa_usd'], 4, ',', '.') : '-' ?></td>
                     <td><?= $p['monto_usd'] !== null ? number_format($p['monto_usd'], 2, ',', '.') : '-' ?></td>
                     <?php if (esAdmin()) { ?>
-                        <td><a href="?eliminar=<?= $p['id_pago'] ?>" class="btn btn-sm btn-danger"
+                        <td><a href="index.php?c=pagos&a=eliminar&id=<?= $p['id_pago'] ?>" class="btn btn-sm btn-danger"
                                onclick="return confirm('¿Eliminar este pago?')">Eliminar</a></td>
                     <?php } ?>
                 </tr>
@@ -157,6 +97,7 @@ var tasa = <?= $tasaHoy ? $tasaHoy['tasa_usd'] : 0 ?>;
 
 function calcularMonto() {
     var opcion = document.getElementById("rubro").selectedOptions[0];
+    if (!opcion) return;
     var usd = parseFloat(opcion.dataset.usd);
 
     if (tasa > 0) {
@@ -169,5 +110,3 @@ function calcularMonto() {
 
 calcularMonto(); // se ejecuta al abrir la página
 </script>
-
-<?php include "footer.php"; ?>

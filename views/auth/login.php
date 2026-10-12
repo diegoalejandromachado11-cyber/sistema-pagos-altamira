@@ -1,32 +1,3 @@
-<?php
-require "conexion.php";
-
-$error = "";
-
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    // Buscamos al usuario por su correo, junto con el nombre de su rol
-    $sql = "SELECT u.*, r.nombre_rol FROM usuario u
-            JOIN rol r ON u.id_rol = r.id_rol
-            WHERE u.email = ?";
-    $stmt = $conexion->prepare($sql);
-    $stmt->execute([$_POST['email']]);
-    $user = $stmt->fetch(PDO::FETCH_ASSOC);
-
-    // password_verify compara la clave escrita con el hash guardado
-    if ($user && password_verify($_POST['contrasena'], $user['contrasena_hash'])) {
-        $_SESSION['id_usuario'] = $user['id_usuario'];
-        $_SESSION['nombre']     = $user['nombre'];
-        $_SESSION['id_rol']     = $user['id_rol'];
-        $_SESSION['nombre_rol'] = $user['nombre_rol'];
-
-        registrarAuditoria($conexion, "LOGIN", "usuario", $user['id_usuario'], "Inicio de sesión");
-        header("Location: index.php");
-        exit;
-    } else {
-        $error = "Correo o contraseña incorrectos";
-    }
-}
-?>
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -48,7 +19,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         <div class="alert alert-danger"><?= $error ?></div>
                     <?php } ?>
 
-                    <form method="POST">
+                    <form method="POST" action="index.php?c=auth&a=login">
                         <div class="mb-3">
                             <label class="form-label">Correo</label>
                             <input type="email" name="email" class="form-control" required>

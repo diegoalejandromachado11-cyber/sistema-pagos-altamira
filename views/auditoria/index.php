@@ -1,16 +1,3 @@
-<?php
-require "conexion.php";
-verificarSesion();
-soloAdmin();
-
-// Últimos 200 movimientos con el nombre del usuario que los hizo
-$registros = $conexion->query("SELECT a.*, u.nombre FROM auditoria a
-                               LEFT JOIN usuario u ON a.id_usuario = u.id_usuario
-                               ORDER BY a.fecha DESC LIMIT 200")->fetchAll(PDO::FETCH_ASSOC);
-
-include "header.php";
-?>
-
 <h3 class="mb-4">Auditoría</h3>
 
 <div class="card">
@@ -26,7 +13,7 @@ include "header.php";
                     <td><span class="badge bg-info text-dark"><?= $a['accion'] ?></span></td>
                     <td><?= $a['tabla_afectada'] ?></td>
                     <td><?= $a['registro_id'] ?></td>
-                    <td><?= htmlspecialchars($a['detalle']) ?></td>
+                    <td><?= htmlspecialchars($a['detalle'] ?? '') ?></td>
                     <td><?= $a['ip'] ?></td>
                 </tr>
             <?php } ?>
@@ -34,5 +21,3 @@ include "header.php";
         </table>
     </div>
 </div>
-
-<?php include "footer.php"; ?>

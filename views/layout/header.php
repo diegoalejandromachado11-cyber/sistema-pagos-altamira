@@ -17,22 +17,30 @@
         </button>
         <div class="collapse navbar-collapse" id="menu">
             <ul class="navbar-nav me-auto">
-                <li class="nav-item"><a class="nav-link" href="index.php">Inicio</a></li>
-                <li class="nav-item"><a class="nav-link" href="pagos.php">Pagos</a></li>
+                <li class="nav-item"><a class="nav-link" href="index.php?c=inicio">Inicio</a></li>
+                <li class="nav-item"><a class="nav-link" href="index.php?c=pagos">Pagos</a></li>
                 <?php if (esAdmin()) { ?>
-                    <li class="nav-item"><a class="nav-link" href="gastos.php">Gastos</a></li>
-                    <li class="nav-item"><a class="nav-link" href="rubros.php">Rubros</a></li>
-                    <li class="nav-item"><a class="nav-link" href="usuarios.php">Usuarios</a></li>
-                    <li class="nav-item"><a class="nav-link" href="tasa.php">Tasa BCV</a></li>
-                    <li class="nav-item"><a class="nav-link" href="auditoria.php">Auditoría</a></li>
+                    <li class="nav-item"><a class="nav-link" href="index.php?c=gastos">Gastos</a></li>
+                    <li class="nav-item"><a class="nav-link" href="index.php?c=rubros">Rubros</a></li>
+                    <li class="nav-item"><a class="nav-link" href="index.php?c=usuarios">Usuarios</a></li>
+                    <li class="nav-item"><a class="nav-link" href="index.php?c=tasa">Tasa BCV</a></li>
+                    <li class="nav-item"><a class="nav-link" href="index.php?c=auditoria">Auditoría</a></li>
                 <?php } ?>
             </ul>
             <span class="navbar-text text-white me-3">
                 <?= htmlspecialchars($_SESSION['nombre']) ?> (<?= htmlspecialchars($_SESSION['nombre_rol']) ?>)
             </span>
-            <a href="logout.php" class="btn btn-outline-light btn-sm">Salir</a>
+            <a href="index.php?c=auth&a=logout" class="btn btn-outline-light btn-sm">Salir</a>
         </div>
     </div>
 </nav>
 
 <div class="container">
+
+<?php
+// Mensaje que dejó el controlador antes de redirigir (se muestra una sola vez)
+if (isset($_SESSION['mensaje'])) { ?>
+    <div class="alert alert-<?= $_SESSION['tipo'] ?>"><?= htmlspecialchars($_SESSION['mensaje']) ?></div>
+<?php
+    unset($_SESSION['mensaje'], $_SESSION['tipo']);
+} ?>
