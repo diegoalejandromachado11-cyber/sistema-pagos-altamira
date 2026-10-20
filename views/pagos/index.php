@@ -1,5 +1,6 @@
-<h3 class="mb-4">Pagos</h3>
+<h3 class="mb-4"><?= esAdmin() ? "Pagos" : "Mis pagos" ?></h3>
 
+<?php if (esAdmin()) { // Solo el administrador ve el formulario para registrar pagos ?>
 <div class="card mb-4">
     <div class="card-header">Registrar pago
         <?php if ($tasaHoy) { ?>
@@ -8,7 +9,6 @@
     </div>
     <div class="card-body">
         <form method="POST" action="index.php?c=pagos&a=guardar" class="row g-3">
-            <?php if (esAdmin()) { ?>
             <div class="col-md-4">
                 <label class="form-label">Vecino</label>
                 <select name="id_usuario" class="form-select" required>
@@ -19,7 +19,6 @@
                     <?php } ?>
                 </select>
             </div>
-            <?php } ?>
             <div class="col-md-4">
                 <label class="form-label">Rubro</label>
                 <!-- data-usd guarda el monto del mes en dólares de cada rubro -->
@@ -64,6 +63,13 @@
         </form>
     </div>
 </div>
+
+<?php } else { ?>
+<div class="alert alert-info">
+    Para registrar un pago, envíe su comprobante a la Junta de Condominio. El administrador lo verifica y lo registra;
+    después usted podrá ver aquí el pago y descargar su factura.
+</div>
+<?php } ?>
 
 <!-- BUSCADOR (usa GET para que la búsqueda quede en la dirección y se pueda recargar) -->
 <div class="card mb-3">
@@ -141,6 +147,7 @@
     </div>
 </div>
 
+<?php if (esAdmin()) { ?>
 <script>
 // Al elegir un rubro, calcula cuánto hay que pagar en Bs: monto en $ x tasa BCV
 var tasa = <?= $tasaHoy ? $tasaHoy['tasa_usd'] : 0 ?>;
@@ -160,3 +167,4 @@ function calcularMonto() {
 
 calcularMonto(); // se ejecuta al abrir la página
 </script>
+<?php } ?>

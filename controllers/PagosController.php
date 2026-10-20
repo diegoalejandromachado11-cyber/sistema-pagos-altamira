@@ -45,8 +45,14 @@ class PagosController extends Controller
     // index.php?c=pagos&a=guardar  (POST)
     public function guardar()
     {
-        // El vecino solo puede registrar pagos a su nombre; el admin elige el vecino
-        $id_usuario = esAdmin() ? $_POST['id_usuario'] : $_SESSION['id_usuario'];
+        // SOLO EL ADMINISTRADOR registra pagos, después de verificar que el dinero llegó.
+        // Si un vecino pudiera registrarlos, podría marcar como pagado algo que no pagó (fraude).
+        if (!esAdmin()) {
+            $this->mensaje("Solo el administrador puede registrar pagos.", "danger");
+            $this->redirigir("pagos");
+        }
+
+        $id_usuario = $_POST['id_usuario'];
         $rubro      = Rubro::buscar($_POST['id_rubro']);
         $periodo    = $_POST['periodo'];
         $monto      = $_POST['monto'];  // monto en bolívares

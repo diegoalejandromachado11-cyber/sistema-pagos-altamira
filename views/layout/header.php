@@ -18,7 +18,7 @@
         <div class="collapse navbar-collapse" id="menu">
             <ul class="navbar-nav me-auto">
                 <li class="nav-item"><a class="nav-link text-nowrap" href="index.php?c=inicio">Inicio</a></li>
-                <li class="nav-item"><a class="nav-link text-nowrap" href="index.php?c=pagos">Pagos</a></li>
+                <li class="nav-item"><a class="nav-link text-nowrap" href="index.php?c=pagos"><?= esAdmin() ? "Pagos" : "Mis pagos" ?></a></li>
                 <li class="nav-item"><a class="nav-link text-nowrap" href="index.php?c=deudas"><?= esAdmin() ? "Deudas" : "Mi deuda" ?></a></li>
                 <?php if (esAdmin()) { ?>
                     <li class="nav-item"><a class="nav-link text-nowrap" href="index.php?c=recaudacion">Recaudación</a></li>

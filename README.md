@@ -112,5 +112,5 @@ El modelo `Deuda` no tiene tabla: compara lo que cada vecino debía pagar con lo
 
 ## Roles
 
-- **Administrador**: acceso a todo.
-- **Vecino**: registra y ve solo sus propios pagos, sus facturas y su deuda.
+- **Administrador**: acceso a todo. Es el único que registra pagos.
+- **Vecino**: solo consulta sus propios pagos, sus facturas y su deuda. No puede registrar pagos, para evitar fraude: el administrador los registra después de verificar que el dinero llegó.

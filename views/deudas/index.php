@@ -58,9 +58,11 @@
                         <td><?= htmlspecialchars($item['rubro']) ?></td>
                         <td class="text-end"><?= number_format($item['monto_usd'], 2, ',', '.') ?></td>
                         <td class="text-end">
+                            <?php if (esAdmin()) { ?>
                             <!-- Abre el formulario de pagos con el vecino, el rubro y el mes ya seleccionados -->
                             <a class="btn btn-sm btn-success"
-                               href="index.php?c=pagos&pre_usuario=<?= $d['vecino']['id_usuario'] ?>&pre_rubro=<?= $item['id_rubro'] ?>&pre_periodo=<?= $item['periodo'] ?>">Pagar</a>
+                               href="index.php?c=pagos&pre_usuario=<?= $d['vecino']['id_usuario'] ?>&pre_rubro=<?= $item['id_rubro'] ?>&pre_periodo=<?= $item['periodo'] ?>">Registrar pago</a>
+                            <?php } ?>
                         </td>
                     </tr>
                 <?php } ?>
