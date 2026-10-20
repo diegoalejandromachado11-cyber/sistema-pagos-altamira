@@ -1,5 +1,5 @@
 <?php
-// CONTROLADOR Auditoria: ver el historial de acciones
+// CONTROLADOR Auditoria: ver y buscar el historial de acciones
 
 class AuditoriaController extends Controller
 {
@@ -8,8 +8,20 @@ class AuditoriaController extends Controller
         $this->soloAdmin();
     }
 
+    // index.php?c=auditoria  (filtros opcionales: &buscar=...&accion=...&desde=...&hasta=...)
     public function index()
     {
-        $this->vista("auditoria/index", ['registros' => Auditoria::ultimos(200)]);
+        $filtros = [
+            'buscar' => trim($_GET['buscar'] ?? ''),
+            'accion' => $_GET['accion'] ?? '',
+            'desde'  => $_GET['desde'] ?? '',
+            'hasta'  => $_GET['hasta'] ?? '',
+        ];
+
+        $this->vista("auditoria/index", [
+            'registros' => Auditoria::buscar($filtros['buscar'], $filtros['accion'], $filtros['desde'], $filtros['hasta']),
+            'acciones'  => Auditoria::acciones(),
+            'filtros'   => $filtros,
+        ]);
     }
 }

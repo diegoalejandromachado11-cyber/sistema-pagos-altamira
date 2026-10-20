@@ -36,10 +36,31 @@
     </div>
 </div>
 
+<!-- BUSCADOR de gastos -->
+<form method="GET" action="index.php" class="row g-2 align-items-end mb-3">
+    <input type="hidden" name="c" value="gastos">
+    <div class="col-md-4">
+        <label class="form-label">Descripción o rubro</label>
+        <input type="text" name="buscar" class="form-control" placeholder="Ej.: vigilante" value="<?= htmlspecialchars($filtros['buscar']) ?>">
+    </div>
+    <div class="col-md-3">
+        <label class="form-label">Desde</label>
+        <input type="date" name="desde" class="form-control" value="<?= htmlspecialchars($filtros['desde']) ?>">
+    </div>
+    <div class="col-md-3">
+        <label class="form-label">Hasta</label>
+        <input type="date" name="hasta" class="form-control" value="<?= htmlspecialchars($filtros['hasta']) ?>">
+    </div>
+    <div class="col-md-2"><button class="btn btn-dark w-100">Buscar</button></div>
+    <div class="col-12"><a href="index.php?c=gastos" class="small">Limpiar búsqueda</a></div>
+</form>
+
 <div class="card">
-    <div class="card-header">Lista de gastos</div>
+    <div class="card-header">Lista de gastos: <?= count($gastos) ?> resultado(s)
+        <span class="float-end">Total: <?= number_format(array_sum(array_column($gastos, 'monto')), 2, ',', '.') ?> Bs</span>
+    </div>
     <div class="card-body table-responsive">
-        <table class="table table-striped">
+        <table class="table table-striped table-sm text-nowrap">
             <thead><tr><th>Fecha</th><th>Rubro</th><th>Descripción</th><th>Monto Bs</th><th>Comprobante</th><th></th></tr></thead>
             <tbody>
             <?php foreach ($gastos as $g) { ?>

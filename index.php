@@ -12,6 +12,9 @@
 
 session_start();
 
+// Todas las fechas y horas del sistema en hora de Venezuela
+date_default_timezone_set("America/Caracas");
+
 require_once "config/conexion.php";
 require_once "controllers/Controller.php";
 
@@ -25,6 +28,13 @@ spl_autoload_register(function ($clase) {
         }
     }
 });
+
+// Actualización automática de la tasa BCV a las 9:30 am y 3:30 pm.
+// Si no hay internet no pasa nada: se registra el intento y se sigue
+// trabajando con la última tasa guardada.
+if (isset($_SESSION['id_usuario'])) {
+    TasaBcv::actualizarAutomatica();
+}
 
 // Si no se indica nada, se va al inicio
 $c = $_GET['c'] ?? 'inicio';

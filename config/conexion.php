@@ -20,6 +20,8 @@ class Conexion
                 self::$pdo = new PDO("mysql:host=$servidor;dbname=$base;charset=utf8mb4", $usuario, $clave);
                 self::$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
                 self::$pdo->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
+                // MySQL también trabaja con la hora de Venezuela (UTC-4)
+                self::$pdo->exec("SET time_zone = '-04:00'");
             } catch (PDOException $e) {
                 die("Error de conexión: " . $e->getMessage());
             }

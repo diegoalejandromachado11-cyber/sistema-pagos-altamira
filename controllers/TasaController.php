@@ -10,7 +10,10 @@ class TasaController extends Controller
 
     public function index()
     {
-        $this->vista("tasa/index", ['tasas' => TasaBcv::todas()]);
+        $this->vista("tasa/index", [
+            'tasas'         => TasaBcv::todas(),
+            'ultimoIntento' => Auditoria::ultimoIntentoTasa(),
+        ]);
     }
 
     // Botón "Actualizar desde el BCV"

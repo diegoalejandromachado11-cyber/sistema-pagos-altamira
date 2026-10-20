@@ -1,5 +1,5 @@
 <?php
-// CONTROLADOR Rubros: crear, editar (cambiar el monto del mes) y eliminar
+// CONTROLADOR Rubros: buscar, crear, editar (cambiar el monto del mes) y eliminar
 
 class RubrosController extends Controller
 {
@@ -8,11 +8,14 @@ class RubrosController extends Controller
         $this->soloAdmin();
     }
 
-    // index.php?c=rubros  (con &editar=ID carga ese rubro en el formulario)
+    // index.php?c=rubros  (&buscar=texto filtra; &editar=ID carga ese rubro en el formulario)
     public function index()
     {
+        $buscar = trim($_GET['buscar'] ?? '');
+
         $this->vista("rubros/index", [
-            'rubros' => Rubro::todos(),
+            'rubros' => Rubro::todos($buscar),
+            'buscar' => $buscar,
             'editar' => isset($_GET['editar']) ? Rubro::buscar($_GET['editar']) : null,
         ]);
     }
@@ -20,8 +23,8 @@ class RubrosController extends Controller
     // index.php?c=rubros&a=guardar  (POST)
     public function guardar()
     {
-        $id = Rubro::crear($_POST['nombre'], $_POST['monto_base'], $_POST['descripcion']);
-        Auditoria::registrar("CREAR", "rubro", $id, "Rubro: " . $_POST['nombre']);
+        $id = Rubro::crear($_POST['nombre'], $_POST['monto_base'], $_POST['mensual'], $_POST['cobrar_desde'], $_POST['descripcion']);
+        Auditoria::registrar("CREAR", "rubro", $id, "Rubro: " . $_POST['nombre'] . " ($" . $_POST['monto_base'] . ")");
         $this->mensaje("Rubro creado");
         $this->redirigir("rubros");
     }
@@ -32,7 +35,8 @@ class RubrosController extends Controller
         // Guardamos el monto anterior para dejarlo en la auditoría
         $anterior = Rubro::buscar($_POST['id_rubro']);
 
-        Rubro::actualizar($_POST['id_rubro'], $_POST['nombre'], $_POST['monto_base'], $_POST['descripcion']);
+        Rubro::actualizar($_POST['id_rubro'], $_POST['nombre'], $_POST['monto_base'],
+                          $_POST['mensual'], $_POST['cobrar_desde'], $_POST['descripcion']);
 
         Auditoria::registrar("MODIFICAR", "rubro", $_POST['id_rubro'],
             $_POST['nombre'] . ": monto cambió de $" . $anterior['monto_base'] . " a $" . $_POST['monto_base']);

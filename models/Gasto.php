@@ -3,12 +3,33 @@
 
 class Gasto
 {
-    public static function todos()
+    // BUSCADOR de gastos. Filtros opcionales:
+    //   $texto -> busca en la descripción o en el nombre del rubro
+    //   $desde / $hasta -> rango de fechas
+    public static function buscar($texto = "", $desde = "", $hasta = "")
     {
         $sql = "SELECT g.*, r.nombre AS rubro FROM gasto g
                 JOIN rubro r ON g.id_rubro = r.id_rubro
-                ORDER BY g.fecha DESC, g.id_gasto DESC";
-        return Conexion::conectar()->query($sql)->fetchAll();
+                WHERE 1 = 1";
+        $parametros = [];
+
+        if ($texto != "") {
+            $sql .= " AND (g.descripcion LIKE ? OR r.nombre LIKE ?)";
+            array_push($parametros, "%$texto%", "%$texto%");
+        }
+        if ($desde != "") {
+            $sql .= " AND g.fecha >= ?";
+            $parametros[] = $desde;
+        }
+        if ($hasta != "") {
+            $sql .= " AND g.fecha <= ?";
+            $parametros[] = $hasta;
+        }
+        $sql .= " ORDER BY g.fecha DESC, g.id_gasto DESC";
+
+        $stmt = Conexion::conectar()->prepare($sql);
+        $stmt->execute($parametros);
+        return $stmt->fetchAll();
     }
 
     public static function crear($id_rubro, $monto, $fecha, $descripcion, $comprobante_url)

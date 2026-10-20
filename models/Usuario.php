@@ -38,6 +38,29 @@ class Usuario
         Conexion::conectar()->prepare("DELETE FROM usuario WHERE id_usuario = ?")->execute([$id]);
     }
 
+    // Solo los vecinos (rol 2). $buscar filtra por cédula o nombre.
+    public static function vecinos($buscar = "")
+    {
+        $sql = "SELECT * FROM usuario WHERE id_rol = 2";
+        $parametros = [];
+        if ($buscar != "") {
+            $soloNumeros = preg_replace('/[^0-9]/', '', $buscar);
+            $sql .= " AND (REPLACE(REPLACE(cedula, '.', ''), '-', '') LIKE ? OR nombre LIKE ?)";
+            $parametros[] = "%" . ($soloNumeros != "" ? $soloNumeros : $buscar) . "%";
+            $parametros[] = "%$buscar%";
+        }
+        $stmt = Conexion::conectar()->prepare($sql . " ORDER BY nombre");
+        $stmt->execute($parametros);
+        return $stmt->fetchAll();
+    }
+
+    public static function buscarPorId($id)
+    {
+        $stmt = Conexion::conectar()->prepare("SELECT * FROM usuario WHERE id_usuario = ?");
+        $stmt->execute([$id]);
+        return $stmt->fetch();
+    }
+
     public static function contarVecinos()
     {
         return Conexion::conectar()->query("SELECT COUNT(*) FROM usuario WHERE id_rol = 2")->fetchColumn();

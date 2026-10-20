@@ -31,7 +31,9 @@ CREATE TABLE usuario (
 CREATE TABLE rubro (
     id_rubro INT AUTO_INCREMENT PRIMARY KEY,
     nombre VARCHAR(100) NOT NULL,
-    monto_base DECIMAL(12,2) NOT NULL,
+    monto_base DECIMAL(12,2) NOT NULL,     -- monto del mes en dólares
+    mensual TINYINT(1) NOT NULL DEFAULT 1, -- 1 = se cobra cada mes, 0 = se cobra una sola vez
+    cobrar_desde CHAR(7) NOT NULL,         -- mes desde el que se cobra (AAAA-MM)
     descripcion VARCHAR(255),
     fecha_creacion DATETIME DEFAULT CURRENT_TIMESTAMP
 );
@@ -57,6 +59,8 @@ CREATE TABLE pago (
     periodo VARCHAR(7) NOT NULL,           -- formato AAAA-MM
     metodo_pago VARCHAR(50) NOT NULL,
     referencia VARCHAR(50),
+    -- Un vecino no puede pagar dos veces el mismo rubro del mismo mes
+    CONSTRAINT pago_unico UNIQUE (id_usuario, id_rubro, periodo),
     FOREIGN KEY (id_usuario) REFERENCES usuario(id_usuario),
     FOREIGN KEY (id_rubro) REFERENCES rubro(id_rubro),
     FOREIGN KEY (id_tasa) REFERENCES tasa_bcv(id_tasa)
@@ -96,7 +100,8 @@ INSERT INTO usuario (nombre, cedula, email, contrasena_hash, id_rol) VALUES
 ('Administrador', 'V-00000000', 'admin@altamira.com',
  '$2y$10$zBJDOpsXUO5WgCiXRWAEoe1aD.GXzjICcpB55z1GHdgGXTSPHLD.O', 1);
 
-INSERT INTO rubro (nombre, monto_base, descripcion) VALUES
-('Condominio', 20.00, 'Cuota mensual de condominio (USD)'),
-('Vigilancia', 10.00, 'Servicio de vigilancia (USD)'),
-('Mantenimiento', 5.00, 'Mantenimiento de áreas comunes (USD)');
+-- Los rubros iniciales se cobran desde enero del año pasado (fecha de corte de deudas)
+INSERT INTO rubro (nombre, monto_base, mensual, cobrar_desde, descripcion) VALUES
+('Condominio', 20.00, 1, DATE_FORMAT(DATE_SUB(CURDATE(), INTERVAL 1 YEAR), '%Y-01'), 'Cuota mensual de condominio (USD)'),
+('Vigilancia', 10.00, 1, DATE_FORMAT(DATE_SUB(CURDATE(), INTERVAL 1 YEAR), '%Y-01'), 'Servicio de vigilancia (USD)'),
+('Mantenimiento', 5.00, 1, DATE_FORMAT(DATE_SUB(CURDATE(), INTERVAL 1 YEAR), '%Y-01'), 'Mantenimiento de áreas comunes (USD)');

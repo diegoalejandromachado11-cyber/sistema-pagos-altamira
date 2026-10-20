@@ -8,11 +8,19 @@ class GastosController extends Controller
         $this->soloAdmin();
     }
 
+    // index.php?c=gastos  (filtros opcionales: &buscar=texto&desde=fecha&hasta=fecha)
     public function index()
     {
+        $filtros = [
+            'buscar' => trim($_GET['buscar'] ?? ''),
+            'desde'  => $_GET['desde'] ?? '',
+            'hasta'  => $_GET['hasta'] ?? '',
+        ];
+
         $this->vista("gastos/index", [
-            'gastos' => Gasto::todos(),
-            'rubros' => Rubro::todos(),
+            'gastos'  => Gasto::buscar($filtros['buscar'], $filtros['desde'], $filtros['hasta']),
+            'filtros' => $filtros,
+            'rubros'  => Rubro::todos(),
         ]);
     }
 
