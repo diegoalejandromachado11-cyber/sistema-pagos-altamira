@@ -1,10 +1,13 @@
 -- =====================================================
 -- Base de datos: Sistema de Gestión de Pagos
 -- Urbanización Altamira
--- Importar este archivo en phpMyAdmin
+-- Importar este archivo en phpMyAdmin (pestaña Importar).
+-- ATENCIÓN: borra la base "altamira" si ya existe y la crea
+-- de nuevo con todas sus tablas, vacía.
 -- =====================================================
 
-CREATE DATABASE IF NOT EXISTS altamira CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+DROP DATABASE IF EXISTS altamira;
+CREATE DATABASE altamira CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
 USE altamira;
 
 -- Roles del sistema (Administrador, Vecino)

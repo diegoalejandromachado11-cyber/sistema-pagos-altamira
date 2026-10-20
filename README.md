@@ -17,9 +17,7 @@ Usuario inicial: **admin@altamira.com** / clave **admin123**
 
 Si tu MySQL tiene otra clave, cámbiala en `config/conexion.php`.
 
-### Si ya tenías instalada la versión anterior
-
-No borres la base de datos. En phpMyAdmin, selecciona la base `altamira`, ve a **Importar** y sube `actualizar_v2.sql`. Agrega las columnas nuevas de rubros y la regla que bloquea pagos duplicados.
+`database.sql` es el único archivo de base de datos. Si la base `altamira` ya existe, la borra y la crea de nuevo vacía, así que no lo vuelvas a importar cuando ya tengas datos reales.
 
 ## Funciones
 
@@ -65,8 +63,7 @@ altamira/
 ├── assets/                ← Bootstrap 5 local (funciona sin internet)
 ├── tareas/actualizar_tasa.php ← opcional, para el Programador de tareas de Windows
 ├── uploads/               ← Comprobantes de gastos
-├── database.sql           ← Instalación nueva
-└── actualizar_v2.sql      ← Actualizar una instalación anterior
+└── database.sql           ← Crea la base de datos completa
 ```
 
 ### Cómo viaja una petición
