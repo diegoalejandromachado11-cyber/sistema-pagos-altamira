@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Ingresar - Urbanización Altamira</title>
+    <title>Sistema de Gestión de Pagos - Urbanización Altamira</title>
     <link href="assets/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body class="bg-primary-subtle">

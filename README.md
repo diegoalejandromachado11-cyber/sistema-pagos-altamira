@@ -1,6 +1,6 @@
 # Sistema de Gestión de Pagos — Urbanización Altamira
 
-Sistema web para registrar los pagos, gastos y rubros de cobro de la Urbanización Altamira, con conversión automática de dólares a bolívares usando la tasa oficial del BCV (obtenida por *web scraping*).
+Sistema de información para registrar los pagos, gastos y rubros de cobro de la Urbanización Altamira, con conversión automática de dólares a bolívares usando la tasa oficial del BCV (obtenida por *web scraping*).
 
 Hecho con **PHP 8, MySQL y Bootstrap 5**, siguiendo el patrón **Modelo-Vista-Controlador (MVC)**.
 
@@ -11,7 +11,10 @@ Hecho con **PHP 8, MySQL y Bootstrap 5**, siguiendo el patrón **Modelo-Vista-Co
 1. Copiar la carpeta del proyecto dentro de `C:\xampp\htdocs\` con el nombre `altamira`.
 2. Encender **Apache** y **MySQL** en el panel de XAMPP.
 3. Abrir `http://localhost/phpmyadmin`, ir a **Importar** y subir `database.sql`.
-4. Abrir `http://localhost/altamira/`.
+4. Hacer clic derecho en **`Iniciar Sistema Altamira.bat`** → **Enviar a** → **Escritorio (crear acceso directo)**, y ponerle de nombre **Sistema Altamira**.
+5. Abrir el sistema con doble clic en ese acceso directo.
+
+El acceso directo enciende Apache y MySQL (si están apagados) y abre el sistema en **su propia ventana**, sin barra de direcciones, como cualquier programa de escritorio. También se puede entrar escribiendo `http://localhost/altamira/` en el navegador.
 
 Usuario inicial: **admin@altamira.com** / clave **admin123**
 
@@ -62,6 +65,7 @@ altamira/
 │   └── rubros/  gastos/  usuarios/  tasa/  auditoria/
 ├── assets/                ← Bootstrap 5 local (funciona sin internet)
 ├── tareas/actualizar_tasa.php ← opcional, para el Programador de tareas de Windows
+├── Iniciar Sistema Altamira.bat ← abre el sistema en su propia ventana
 ├── uploads/               ← Comprobantes de gastos
 └── database.sql           ← Crea la base de datos completa
 ```

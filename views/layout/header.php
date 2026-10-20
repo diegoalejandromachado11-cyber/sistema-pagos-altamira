@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Urbanización Altamira - Pagos</title>
+    <title>Sistema de Gestión de Pagos - Urbanización Altamira</title>
     <!-- Bootstrap 5 guardado dentro del proyecto: funciona sin internet -->
     <link href="assets/css/bootstrap.min.css" rel="stylesheet">
 </head>
